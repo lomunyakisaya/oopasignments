@@ -9,5 +9,8 @@ public class Main {
         t1.getAll();
         t1.toString();
         t1.convertToSeconds();
+        t1.decrementHour();
+        t1.decrementMinute();
+
     }
 }
