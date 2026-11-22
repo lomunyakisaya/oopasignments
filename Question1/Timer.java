@@ -1,66 +1,184 @@
+
 public class Timer {
     private int hour;
-    private  int minutes;
+    private int minutes;
     private int seconds;
-    Timer(int x, int y, int z){
+    private int dayOffset;
+
+    // Constructor
+    public Timer(int x, int y, int z) {
+        if (x < 0 || x > 23) {
+            throw new IllegalArgumentException("Invalid hour");
+        }
+        if (y < 0 || y > 59) {
+            throw new IllegalArgumentException("Invalid minutes");
+        }
+        if (z < 0 || z > 59) {
+            throw new IllegalArgumentException("Invalid seconds");
+        }
+
         this.hour = x;
-        this.minutes= y;
+        this.minutes = y;
         this.seconds = z;
-
-        if(this.hour < 0 || this.hour > 23){
-            throw new IllegalArgumentException("Value error: Hour given is invalid value");
-        }
-        if (this.minutes < 0 || this.minutes > 59){
-            throw new IllegalArgumentException("Value error: Minutes given is invalid value");
-        }
-        if (this.seconds < 0 || this.seconds > 59){
-            throw new IllegalArgumentException("Value error: Seconds given is invalid value");
-        }
+        this.dayOffset = 0;
     }
-    //add 2 timers
-    public Timer add(Timer t){
-        int seconds = this.hour + t.seconds;
-        int minutes = this.minutes + t.minutes;
-        int hours = this.hour + t.hour;
-        return new Timer(hours, minutes, seconds);
 
+    // Getters
+    public int getHour() {
+        return this.hour;
+    }
 
+    public int getMinutes() {
+        return this.minutes;
     }
-    void getAll(){
-        System.out.println("The current time is: " + this.hour + ":" + this.minutes + ":" + this.seconds);
+
+    public int getSeconds() {
+        return this.seconds;
     }
-    /*
-    void setAll(int x, int y, int z){
+
+    public int getDayOffset() {
+        return this.dayOffset;
+    }
+
+    // Setters
+    public void setHour(int x) {
+        if (x < 0 || x > 23) {
+            throw new IllegalArgumentException("Invalid hour");
+        }
         this.hour = x;
-        this.minutes= y;
-        this.seconds = z;
+    }
 
-        if(this.hour < 0 || this.hour > 23){
-            System.out.println("Hour indicated is out of range. \n Using 0 as default");
-            this.hour = 0;
+    public void setMinutes(int x) {
+        if (x < 0 || x > 59) {
+            throw new IllegalArgumentException("Invalid minutes");
         }
-        if (this.minutes < 0 || this.minutes > 59){
-            System.out.println("Minutes indicated is out of range. \n Using 0  as default");
-            this.minutes =0;
-        }
-        if (this.seconds < 0 || this.seconds > 59){
-            System.out.println("Minutes indicated is out of range. \n Using 0 as default");
-            this.seconds =0;
-        }
+        this.minutes = x;
     }
-    */
-    @Override 
-    public String toString(){
-        return "The current time is: " + this.hour + ":" + this.minutes + ":" + this.seconds;
 
+    public void setSeconds(int x) {
+        if (x < 0 || x > 59) {
+            throw new IllegalArgumentException("Invalid seconds");
+        }
+        this.seconds = x;
     }
-    void convertToSeconds(){
-        int step1 = this.hour * 60 * 60;
-        int step2 = this.minutes * 60;
-        int tatolSeconds = this.seconds + step1 + step2;
-        System.out.println("Seconds are:"+ tatolSeconds);
-    }
-    void addTimers(){
 
+    // Display time
+    @Override
+    public String toString() {
+        return String.format("%02d:%02d:%02d",
+                this.hour, this.minutes, this.seconds);
     }
-} 
+
+    // Convert time into total seconds
+    public int convertToSeconds() {
+        return (this.hour * 3600) +
+               (this.minutes * 60) +
+               this.seconds;
+    }
+
+    // Add two timers
+    public Timer add(Timer t) {
+
+        int sec = this.seconds + t.seconds;
+        int min = this.minutes + t.minutes;
+        int hrs = this.hour + t.hour;
+
+        min += sec / 60;
+        sec = sec % 60;
+
+        hrs += min / 60;
+        min = min % 60;
+
+        int days = hrs / 24;
+        hrs = hrs % 24;
+
+        Timer result = new Timer(hrs, min, sec);
+        result.dayOffset = this.dayOffset + t.dayOffset + days;
+
+        return result;
+    }
+
+    // Convert to AM/PM
+    public String toAMPM() {
+        int h = this.hour;
+        String period = "AM";
+
+        if (h >= 12) {
+            period = "PM";
+        }
+
+        if (h == 0) {
+            h = 12;
+        }
+        else if (h > 12) {
+            h = h - 12;
+        }
+
+        return String.format("%02d:%02d:%02d %s",
+                h, this.minutes, this.seconds, period);
+    }
+
+    // Compare two timers
+    public int compare(Timer t) {
+        return this.convertToSeconds() -
+               t.convertToSeconds();
+    }
+
+    // Decrement seconds
+    public void decrementSecond() {
+        this.seconds--;
+
+        if (this.seconds < 0) {
+            this.seconds = 59;
+            decrementMinute();
+        }
+    }
+
+    // Decrement minutes
+    public void decrementMinute() {
+        this.minutes--;
+
+        if (this.minutes < 0) {
+            this.minutes = 59;
+            decrementHour();
+        }
+    }
+
+    // Decrement hours
+    public void decrementHour() {
+        this.hour--;
+
+        if (this.hour < 0) {
+            this.hour = 23;
+            this.dayOffset--;
+
+            System.out.println("Previous day: " + this);
+        }
+    }
+
+    // Increase time by given hours, minutes and seconds
+    public void incrementTime(int h, int m, int s) {
+
+        int sec = this.seconds + s;
+        int min = this.minutes + m;
+        int hrs = this.hour + h;
+
+        min += sec / 60;
+        sec = sec % 60;
+
+        hrs += min / 60;
+        min = min % 60;
+
+        this.dayOffset += hrs / 24;
+        hrs = hrs % 24;
+
+        this.hour = hrs;
+        this.minutes = min;
+        this.seconds = sec;
+    }
+
+    // Display day offset
+    public void displayDayOffset() {
+        System.out.println("Day offset: " + this.dayOffset);
+    }
+}
