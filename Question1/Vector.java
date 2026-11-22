@@ -42,4 +42,8 @@ public class Vector {
         System.out.println("==========The Cross Product of Vectors A and B is============="); 
         System.out.println("\t\t\t<"+ det1 + "," + det2 + "," + det3 + ">");
     }
+    @Override 
+    public String toString(){
+        return "Vector 1 is: <" + this.vector1[0] + this.vector1[1] + this.vector1[2] + ">" + "\t" + "Vector 2 is: <" + this.vector2[0] + this.vector1[1] + this.vector1[2]  +">";
+    }
 }
