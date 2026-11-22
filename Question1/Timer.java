@@ -17,6 +17,15 @@ public class Timer {
             throw new IllegalArgumentException("Value error: Seconds given is invalid value");
         }
     }
+    //add 2 timers
+    public Timer add(Timer t){
+        int seconds = this.hour + t.seconds;
+        int minutes = this.minutes + t.minutes;
+        int hours = this.hour + t.hour;
+        return new Timer(hours, minutes, seconds);
+
+
+    }
     void getAll(){
         System.out.println("The current time is: " + this.hour + ":" + this.minutes + ":" + this.seconds);
     }
@@ -46,9 +55,12 @@ public class Timer {
 
     }
     void convertToSeconds(){
-        float step1 = this.hour * 60 * 60;
-        float step2 = this.minutes * 60;
-        float tatolSeconds = this.seconds + step1 + step2;
+        int step1 = this.hour * 60 * 60;
+        int step2 = this.minutes * 60;
+        int tatolSeconds = this.seconds + step1 + step2;
         System.out.println("Seconds are:"+ tatolSeconds);
+    }
+    void addTimers(){
+
     }
 } 
